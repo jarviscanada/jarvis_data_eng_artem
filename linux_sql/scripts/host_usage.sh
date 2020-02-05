@@ -24,20 +24,20 @@ disk_available=$(echo "$disk" | awk 'NR==2 {print $4}' | xargs)
 timestamp=`date +"%Y-%m-%d %H:%M:%S"`
 
 #query to get the id associated with the hostname in host_info table
-query1="SELECT id  FROM host_info WHERE hostname='$(hostname -f)'"
+findHostNameQuery="SELECT id  FROM host_info WHERE hostname='$(hostname -f)'"
 
 #export password for database connection
 export PGPASSWORD=$psql_password
 
 #get host id
-host_id=`psql -h $psql_host -p $psql_port  -d $db_name -U $psql_user -t -c"$query1"`
+host_id=`psql -h $psql_host -p $psql_port  -d $db_name -U $psql_user -t -c"$findHostNameQuery"`
 
 #main query for insertion of a usage details into host_usage table
-query2="INSERT INTO host_usage (timestamp,host_id,memory_free,cpu_idel,cpu_kernel,disk_io,disk_available) VALUES ('$timestamp','"$host_id"','$memory_free','$cpu_idle','$cpu_kernel','$disk_io','"${disk_available%?}"')"
+insertUsageInfoQuery="INSERT INTO host_usage (timestamp,host_id,memory_free,cpu_idel,cpu_kernel,disk_io,disk_available) VALUES ('$timestamp','"$host_id"','$memory_free','$cpu_idle','$cpu_kernel','$disk_io','"${disk_available%?}"')"
 
  
 #execute main query
-psql -h $psql_host -p $psql_port  -d $db_name -U $psql_user -c "$query2"
+psql -h $psql_host -p $psql_port  -d $db_name -U $psql_user -c "$insertUsageInfoQuery"
 
 exit 0
 
