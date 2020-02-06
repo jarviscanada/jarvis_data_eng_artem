@@ -1,4 +1,4 @@
-te a database
+--create a database
 CREATE DATABASE host_agent;
 
 --switch to a database
