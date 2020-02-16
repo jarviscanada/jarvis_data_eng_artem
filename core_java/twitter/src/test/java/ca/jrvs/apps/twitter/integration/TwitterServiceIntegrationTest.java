@@ -9,13 +9,16 @@ import ca.jrvs.apps.twitter.dao.helper.HttpHelper;
 import ca.jrvs.apps.twitter.dao.helper.TwitterHttpHelper;
 import ca.jrvs.apps.twitter.model.Coordinates;
 import ca.jrvs.apps.twitter.model.Tweet;
+import ca.jrvs.apps.twitter.service.TwitterService;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 
-public class TwitterDaoIntegrationTest {
+public class TwitterServiceIntegrationTest {
   TwitterDao twitterDao;
+  //@Autowired
+  TwitterService twitterService;
 
   @Before
   public void init(){
@@ -24,11 +27,11 @@ public class TwitterDaoIntegrationTest {
         System.getenv("accessToken"),
         System.getenv("tokenSecret"));
     twitterDao = new TwitterDao(httpHelper);
+    twitterService = new TwitterService(twitterDao);
   }
 
   @Test
-  public void createMustReturnNewlyPostedTweet() {
-    //create a new tweet with coordinates
+  public void postTweetMustPostTweetAndReturnIt(){
     Tweet tweet = new Tweet();
     String hashtag = "#exampletweet";
     Coordinates coordinates = new Coordinates();
@@ -39,12 +42,10 @@ public class TwitterDaoIntegrationTest {
 
     coordinates.setCoordinates(coordinatesList);
     tweet.setCoordinates(coordinates);
-    tweet.setText("this is example tweet "+hashtag+" @aaaua5");
+    tweet.setText("this is example tweet posted from service "+hashtag+" @aaaua5");
 
-    //send a post request
-    Tweet createdTweet = twitterDao.create(tweet);
+    Tweet createdTweet = twitterService.postTweet(tweet);
 
-    //check if created tweet is correct
     assertNotNull(createdTweet.getId());
     assertNotNull(createdTweet.getIdString());
 
@@ -62,7 +63,7 @@ public class TwitterDaoIntegrationTest {
   }
 
   @Test
-  public void findByIdShouldReturnCorrectTweet() {
+  public void showTweetMustShowExistentTweet() {
     //create and post tweet that will be searched
     Tweet tweet = new Tweet();
     String hashtag = "#exampletweet";
@@ -72,11 +73,11 @@ public class TwitterDaoIntegrationTest {
     coordinatesList.add(43.0f);
     coordinates.setCoordinates(coordinatesList);
     tweet.setCoordinates(coordinates);
-    tweet.setText("this is another example of a tweet "+hashtag+" @aaaua5");
-    tweet = twitterDao.create(tweet);
+    tweet.setText("this is another example of a tweet from service "+hashtag+" @aaaua5");
+    tweet = twitterService.postTweet(tweet);
 
     //find the tweet
-    Tweet foundTweet = twitterDao.findById(tweet.getIdString());
+    Tweet foundTweet = twitterService.showTweet(tweet.getIdString(), new String[]{});
 
     //compare found tweet with posted
     assertEquals(tweet.getText(),foundTweet.getText());
@@ -93,36 +94,44 @@ public class TwitterDaoIntegrationTest {
   }
 
   @Test
-  public void deleteMustReturnDeletedTweet() {
-    //create and post tweet that will be deleted
-    Tweet tweet = new Tweet();
+  public void deleteTweetsMustDeleteExistentTweets(){
+    String[] listOfIds = new String[2];
+
+    Tweet tweet1 = new Tweet();
     String hashtag = "#exampletweet";
     Coordinates coordinates = new Coordinates();
     List<Float> coordinatesList = new ArrayList<Float>();
     coordinatesList.add(79.0f);
     coordinatesList.add(43.0f);
     coordinates.setCoordinates(coordinatesList);
-    tweet.setCoordinates(coordinates);
-    tweet.setText("this tweet will be deleted "+hashtag+" @aaaua5");
-    tweet = twitterDao.create(tweet);
+    tweet1.setCoordinates(coordinates);
+    tweet1.setText("this tweet will be deleted from service "+hashtag+" @aaaua5");
+    tweet1 = twitterService.postTweet(tweet1);
+    listOfIds[0] = tweet1.getIdString();
 
-    Tweet deletedTweet = twitterDao.deleteById(tweet.getIdString());
+    Tweet tweet2 = new Tweet();
+    coordinates.setCoordinates(coordinatesList);
+    tweet2.setCoordinates(coordinates);
+    tweet2.setText("this tweet will also be deleted from service "+hashtag+" @aaaua5");
+    tweet2 = twitterService.postTweet(tweet2);
+    listOfIds[1] = tweet2.getIdString();
 
-    //make sure tweet is deleted
-    assertEquals(null,twitterDao.findById(deletedTweet.getIdString()).getId());
+    List<Tweet> deletedTweets = twitterService.deleteTweets(listOfIds);
+
+
+    assertEquals(2,deletedTweets.size());
 
     //compare deleted tweet with the one that was posted
-    assertEquals(tweet.getText(),deletedTweet.getText());
+    assertEquals(tweet1.getText(),deletedTweets.get(0).getText());
 
-    assertEquals(tweet.getCoordinates().getCoordinates().size(),
-        deletedTweet.getCoordinates().getCoordinates().size());
-    assertEquals(tweet.getCoordinates().getCoordinates().get(0),
-        deletedTweet.getCoordinates().getCoordinates().get(0));
-    assertEquals(tweet.getCoordinates().getCoordinates().get(1),
-        deletedTweet.getCoordinates().getCoordinates().get(1));
+    assertEquals(tweet1.getCoordinates().getCoordinates().size(),
+        deletedTweets.get(0).getCoordinates().getCoordinates().size());
+    assertEquals(tweet1.getCoordinates().getCoordinates().get(0),
+        deletedTweets.get(0).getCoordinates().getCoordinates().get(0));
+    assertEquals(tweet1.getCoordinates().getCoordinates().get(1),
+        deletedTweets.get(0).getCoordinates().getCoordinates().get(1));
 
-    assertTrue(hashtag.contains(deletedTweet.getEntities().getHashtags().get(0).getText()));
-    assertEquals(1,deletedTweet.getEntities().getMentions().size());
+    assertTrue(hashtag.contains(deletedTweets.get(0).getEntities().getHashtags().get(0).getText()));
+    assertEquals(1,deletedTweets.get(0).getEntities().getMentions().size());
   }
-
 }

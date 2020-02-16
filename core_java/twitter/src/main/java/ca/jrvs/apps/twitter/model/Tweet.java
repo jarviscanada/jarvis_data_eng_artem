@@ -3,22 +3,22 @@ package ca.jrvs.apps.twitter.model;
 import com.fasterxml.jackson.annotation.JsonSetter;
 
 public class Tweet {
-  private long id;
+  private Long id;
   private String idString;
   private String createdAt;
   private String text;
   private Entities entities;
   private Coordinates coordinates;
-  private int retweetCount;
+  private Integer retweetCount;
   private Integer favoriteCount;
-  private boolean favorited;
-  private boolean retweeted;
+  private Boolean favorited;
+  private Boolean retweeted;
 
-  public long getId() {
+  public Long getId() {
     return id;
   }
 
-  public void setId(long id) {
+  public void setId(Long id) {
     this.id = id;
   }
 
@@ -64,12 +64,12 @@ public class Tweet {
     this.coordinates = coordinates;
   }
 
-  public int getRetweetCount() {
+  public Integer getRetweetCount() {
     return retweetCount;
   }
 
   @JsonSetter("retweet_count")
-  public void setRetweetCount(int retweetCount) {
+  public void setRetweetCount(Integer retweetCount) {
     this.retweetCount = retweetCount;
   }
 
@@ -82,19 +82,19 @@ public class Tweet {
     this.favoriteCount = favoriteCount;
   }
 
-  public boolean isFavorited() {
+  public Boolean isFavorited() {
     return favorited;
   }
 
-  public void setFavorited(boolean favorited) {
+  public void setFavorited(Boolean favorited) {
     this.favorited = favorited;
   }
 
-  public boolean isRetweeted() {
+  public Boolean isRetweeted() {
     return retweeted;
   }
 
-  public void setRetweeted(boolean retweeted) {
+  public void setRetweeted(Boolean retweeted) {
     this.retweeted = retweeted;
   }
 
