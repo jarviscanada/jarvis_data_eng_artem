@@ -23,7 +23,7 @@ public class TwitterApiTest {
 
     String status = "today is a good day";
     PercentEscaper percentEscaper = new PercentEscaper("",false);
-    HttpPost request = new HttpPost("https://api.twitter.com/1.1/statuses/update.json?screen_name="+
+    HttpPost request = new HttpPost("https://api.twitter.com/1.1/statuses/update.json?status="+
         percentEscaper.escape(status));
 
     consumer.sign(request);
