@@ -4,6 +4,13 @@ Twitter App works with Twitter API and is used to create, show and delete tweets
 # Design
 ![UML diagram](/core_java/twitter/twitterUML.png)
 
+#### Components:
+* Twitter HTTP Helper - a component that is responsible for sending and receiving  requests. The URI is passed to post/get method of the class, which create a request, by attaching the URI and authentication keys to it and then sends it. The response is returned.   
+* Twitter DAO - a component that is responsible for creating the URIs for creating, deleting and finding tweets. Based on the method, a specific URI is created and passed to the HTTP helper layer to send a request. The response that is returned by the HTTP helper is checked to have an "OK" status and then its body is translated into a Tweeter object. Which is then returned.
+* Twitter Service - a component that provides a business logic to the application. In this app, for each operation (post/show/delete tweet) it verifies the correctness of the arguments. In addition, it makes it possible to delete multiple tweets based on the provided ID list (by executing multiple calls of DAO layer methods) and showing the tweet with specific fields (by eliminating the fields that are not in the provided list of fields).  
+* Twitter Controller - a layer that is used to consume the user input and call the corresponding service layer methods. In addition, it verifies the arguments of Twitter CLI that are passed to it.  
+* Twitter APP - a layer is used to accept arguments from CLI and pass them to the controller layer of the app. Returned tweets are printed for the user. 
+
 # Quick Start
 #### To package the app, Maven command "package" must be executed: <br/>
 `mvn package`<br/>
@@ -49,7 +56,7 @@ The model in this project is a Tweet. Tweet consists of multiple fields:
 10. favorited - true/false identifies if the tweet was liked
 
 # Improvements 
-1. Extend the Tweet model in termes of fields
+1. Extend the Tweet model in terms of fields
 2. Add more options for Tweet manipulations, which will be implemented in the service layer
 3. Create exceptions for each type of error that can occur during the execution of the app commands
 
