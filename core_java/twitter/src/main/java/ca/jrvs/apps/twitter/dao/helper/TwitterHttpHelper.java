@@ -9,6 +9,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
@@ -26,6 +27,17 @@ public class TwitterHttpHelper implements HttpHelper {
 
     //httpClient = new DefaultHttpClient();
     httpClient = HttpClientBuilder.create().build();
+  }
+
+  public TwitterHttpHelper() {
+    String consumerKey = System.getenv("consumerKey");
+    String consumerSecret = System.getenv("consumerSecret");
+    String accessToken = System.getenv("accessToken");
+    String tokenSecret = System.getenv("tokenSecret");
+
+    OAuthConsumer consumer = new CommonsHttpOAuthConsumer(consumerKey,consumerSecret);
+    consumer.setTokenWithSecret(accessToken,tokenSecret);
+    httpClient = new DefaultHttpClient();
   }
 
   /**

@@ -7,7 +7,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-@SpringBootApplication(scanBasePackages = "ca.jrvs.apps.twitter")
+//@SpringBootApplication(scanBasePackages = "ca.jrvs.apps.twitter")
 public class TwitterCLISpringBoot implements CommandLineRunner {
   private TwitterCLIApp app;
 
