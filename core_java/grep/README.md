@@ -35,6 +35,7 @@ writeToFile(matchedLines)
 ```
 
 # Performance issue
+The performance issue of grep app is that the lines from each file are stored in the list of Strings which has a limited capacity defined by the JVM. This means that for files with a large number of lines the program would not work, because it will run out of memory. To solve this problem streams can be used. Due to the fact that they provide pipelines, the improved program can process each line from file one by one and check if it contains the regex. If so it will be stored, otherwise dismissed. This means that the program will not store every line from the file but only the needed lines and would not run out of memory.
 
 # Improvements
 1. Extend the search scope. At this point, Grep looks for files in the provided directory and ignores files in subdirectories. An improved version would search for files in all subdirectories. 
