@@ -14,7 +14,7 @@ import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfigurat
 
 @SpringBootApplication(exclude = {JdbcTemplateAutoConfiguration.class,
     DataSourceAutoConfiguration.class, HibernateJpaAutoConfiguration.class})
-public class Application implements CommandLineRunner {
+public class Application {
   private static final Logger logger = LoggerFactory.getLogger(Application.class);
 
   @Value("${app.init.dailyList}")
@@ -24,12 +24,6 @@ public class Application implements CommandLineRunner {
   private QuoteService quoteService;
 
   public static void main(String[] args) {
-    SpringApplication app = new SpringApplication(Application.class);
-    app.run(args);
-  }
-
-  @Override
-  public void run(String... args) throws Exception {
-
+    SpringApplication.run(Application.class, args);
   }
 }
