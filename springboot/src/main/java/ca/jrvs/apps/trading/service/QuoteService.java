@@ -7,6 +7,7 @@ import ca.jrvs.apps.trading.model.domain.Quote;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import javax.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -95,8 +96,34 @@ public class QuoteService {
     return quote;
   }
 
-  public IexQuote findIexQuoteByTicker(String ticker){
+  public IexQuote findIexQuoteByTicker(String ticker) {
     return marketDataDao.findById(ticker)
         .orElseThrow(() -> new IllegalArgumentException(ticker + " is invalid!"));
+  }
+
+  public List<Quote> saveQuotes(List<String> tickers) {
+    List<IexQuote> iexQuoteList = marketDataDao.findAllById(tickers);
+    List<Quote> quotes = iexQuoteList.stream().map(iexQuote -> buildQuoteFromIexQuote(iexQuote))
+        .collect(
+            Collectors.toList());
+
+    return quoteDao.saveAll(quotes);
+  }
+
+  public Quote saveQuote(String ticker){
+    Optional<IexQuote> iexQuote = marketDataDao.findById(ticker);
+    if(iexQuote.isPresent()){
+      return saveQuote(buildQuoteFromIexQuote(iexQuote.get()));
+    }else{
+     throw new IllegalArgumentException("Wrong ticker name");
+    }
+  }
+
+  public Quote saveQuote(Quote quote) {
+    return quoteDao.save(quote);
+  }
+
+  public List<Quote> findAllQuotes() {
+    return quoteDao.findAll();
   }
 }
