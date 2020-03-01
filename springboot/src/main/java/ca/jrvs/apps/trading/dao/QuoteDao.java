@@ -133,7 +133,7 @@ public class QuoteDao implements CrudRepository<Quote, String> {
 
   @Override
   public long count() {
-    return jdbcTemplate.queryForObject("SELECT COUNT(*) FROM "+TABLE_NAME, Integer.class);
+    return jdbcTemplate.queryForObject("SELECT COUNT(*) FROM "+TABLE_NAME, Long.class);
   }
 
   @Override

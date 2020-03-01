@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,7 +31,7 @@ public class QuoteController {
   @ResponseBody
   public IexQuote getQuote(@PathVariable String ticker){
     try{
-      return quoteService.findIexQuoteByTicker(ticker);
+      return quoteService.findIexQuoteByTicker(ticker.toUpperCase());
     }catch (Exception e){
       throw  ResponseExceptionUtil.getResponseStatusException(e);
     }
@@ -58,12 +59,12 @@ public class QuoteController {
     }
   }
 
-  @PutMapping(path = "/tickerId/{tickerId}")
+  @PostMapping(path = "/tickerId/{tickerId}")
   @ResponseStatus(HttpStatus.CREATED)
   @ResponseBody
   public Quote createQuote(@PathVariable String tickerId){
     try{
-      return quoteService.saveQuote(tickerId);
+      return quoteService.saveQuote(tickerId.toUpperCase());
     }catch (Exception e){
       throw  ResponseExceptionUtil.getResponseStatusException(e);
     }
