@@ -30,80 +30,111 @@ public class TraderAccountService {
     this.securityOrderDao = securityOrderDao;
   }
 
-  public Account withdraw(Integer traderId, Double fund){
-    if(traderId != null && fund != null){
-      if(fund.doubleValue() > 0){
-        Optional<Account> traderAccount = accountDao.findByTraderId(traderId);
-        if(traderAccount.isPresent()){
-          if(traderAccount.get().getAmount().doubleValue() > fund){
-            Double result = traderAccount.get().getAmount() - fund;
-            return accountDao.updateAmountById(traderAccount.get().getId(),result);
-          }else{
-            throw new IllegalArgumentException("Insufficient funds");
-          }
-        }else{
-          throw new IllegalArgumentException("No account associated with this Trader ID");
-        }
-      }else{
-        throw new IllegalArgumentException("Funds must be greater than 0");
-      }
-    }else{
+  public Account withdraw(Integer traderId, Double fund) {
+    verifyTraderIdAndFundNotNull(traderId, fund);
+
+    verifyFundsGreaterThanZero(fund);
+
+    Optional<Account> traderAccount = accountDao.findByTraderId(traderId);
+
+    verifyAccountIsExists(traderAccount);
+
+    verifyFundsAreSufficient(fund, traderAccount);
+
+    Double result = traderAccount.get().getAmount() - fund;
+    return accountDao.updateAmountById(traderAccount.get().getId(), result);
+  }
+
+  private void verifyFundsAreSufficient(Double fund, Optional<Account> traderAccount) {
+    if (traderAccount.get().getAmount().doubleValue() < fund) {
+      throw new IllegalArgumentException("Insufficient funds");
+    }
+  }
+
+  private void verifyAccountIsExists(Optional<Account> traderAccount) {
+    if (!traderAccount.isPresent()) {
+      throw new IllegalArgumentException("No account associated with this Trader ID");
+    }
+  }
+
+  private void verifyFundsGreaterThanZero(Double fund) {
+    if (fund.doubleValue() < 0) {
+      throw new IllegalArgumentException("Funds must be greater than 0");
+    }
+  }
+
+  private void verifyTraderIdAndFundNotNull(Integer traderId, Double fund) {
+    if (traderId == null || fund == null) {
       throw new IllegalArgumentException("Trader ID and Funds cannot be null");
     }
   }
 
-  public Account deposit(Integer traderId, Double fund){
-    if(traderId != null && fund != null){
-      if(fund.doubleValue() > 0 ){
-        Optional<Account> traderAccount = accountDao.findByTraderId(traderId);
-        if(traderAccount.isPresent()){
-          return accountDao.updateAmountById(traderAccount.get().getId(),fund);
-        }else{
-          throw new IllegalArgumentException("No account associated with this Trader ID");
-        }
-      }else{
-        throw new IllegalArgumentException("Funds must be greater than 0");
+  public Account deposit(Integer traderId, Double fund) {
+    verifyTraderIdAndFundNotNull(traderId, fund);
+
+    verifyFundsGreaterThanZero(fund);
+
+    Optional<Account> traderAccount = accountDao.findByTraderId(traderId);
+
+    verifyAccountIsExists(traderAccount);
+
+    return accountDao.updateAmountById(traderAccount.get().getId(), fund);
+
+  }
+
+  public void deleteTraderById(Integer traderId) {
+    verifyTraderIdNotNull(traderId);
+    Optional<Trader> trader = traderDao.findById(traderId);
+
+    verifyTraderExists(trader);
+    Account account = accountDao.findById(traderId).get();
+
+    verifyTraderFundsAreZero(account);
+
+    try {
+      Optional<Position> position = positionDao.findById(traderId);
+      if (position.isPresent()) {
+        removeAllSecureOrdersOfAccount(account);
       }
-    }else{
-      throw new IllegalArgumentException("Trader ID and Funds cannot be null");
+      accountDao.deleteById(account.getId());
+      traderDao.deleteById(trader.get().getId());
+    } catch (Exception e) {
+      throw new IllegalArgumentException("Unable to delete");
     }
   }
 
-  public void deleteTraderById(Integer traderId){
-    if(traderId != null){
-      Optional<Trader> trader = traderDao.findById(traderId);
-      if(trader.isPresent()){
-        Account account = accountDao.findById(traderId).get();
-        if(account.getAmount()==0){
-          try{
-            Optional<Position> position = positionDao.findById(traderId);
+  private void verifyTraderFundsAreZero(Account account) {
+    if (account.getAmount() != 0) {
+      throw new IllegalArgumentException("Trader balance is not zero");
+    }
+  }
 
-            if(position.isPresent()){
-              List<SecurityOrder> securityOrderList = securityOrderDao.findFilledOrdersByAccountId(account.getId());
-              securityOrderList.stream().forEach(order -> {securityOrderDao.deleteById(order.getId());});
-            }
-            accountDao.deleteById(account.getId());
-            traderDao.deleteById(trader.get().getId());
-          }catch(Exception e){
-            throw new IllegalArgumentException("Unable to delete");
-          }
-        }else{
-          throw new IllegalArgumentException("Trader balance is not zero");
-        }
-      }else{
-        throw new IllegalArgumentException("Trader with a given id does not exist");
-      }
-    }else{
+  private void verifyTraderExists(Optional<Trader> trader) {
+    if (trader.isPresent()) {
+      throw new IllegalArgumentException("Trader with a given id does not exist");
+    }
+  }
+
+  private void verifyTraderIdNotNull(Integer traderId) {
+    if (traderId == null) {
       throw new IllegalArgumentException("Id cannot be null");
     }
   }
 
-  public TraderAccountView createTraderAccount(Trader trader){
+  private void removeAllSecureOrdersOfAccount(Account account) {
+    List<SecurityOrder> securityOrderList = securityOrderDao
+        .findFilledOrdersByAccountId(account.getId());
+    securityOrderList.stream().forEach(order -> {
+      securityOrderDao.deleteById(order.getId());
+    });
+  }
+
+  public TraderAccountView createTraderAccount(Trader trader) {
     Account account;
     TraderAccountView traderAccountView;
 
-    if(isTraderIdNull(trader)){
-      if(isTraderFieldsValid(trader)){
+    if (isTraderIdNull(trader)) {
+      if (isTraderFieldsValid(trader)) {
         trader = traderDao.save(trader);
         account = createNewAccount(trader.getId());
         return createTraderAccountView(trader,account);
