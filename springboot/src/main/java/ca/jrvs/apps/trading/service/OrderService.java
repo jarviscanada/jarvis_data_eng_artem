@@ -38,29 +38,39 @@ public class OrderService {
   }
 
   public SecurityOrder executeMarketOrder(MarketOrderDto orderDto){
-    if(orderDto.getSize() != 0){
-      if(isTickerValid(orderDto)){
-        Optional<Account> account = accountDao.findById(orderDto.getAccountId());
-        if(account.isPresent()){
-          SecurityOrder securityOrder = getNewSecurityOrder(orderDto);
-          if(isPositiveSize(orderDto)){
-            handleBuyMarketOrder(orderDto,securityOrder, account.get());
-          }else{
-            handleSellMarketOrder(orderDto,securityOrder, account.get());
-          }
-          return securityOrderDao.save(securityOrder);
-        }else{
-          throw new IllegalArgumentException("No account associated with given Id");
-        }
-      }else{
-        throw new IllegalArgumentException("Invalid ticker id");
-      }
-    }else{
+    verifyOrderSize(orderDto);
+    verifyTickerId(orderDto);
+
+    Optional<Account> account = accountDao.findById(orderDto.getAccountId());
+
+    if (account.isPresent()) {
+      throw new IllegalArgumentException("No account associated with given Id");
+    }
+
+    SecurityOrder securityOrder = getNewSecurityOrder(orderDto);
+
+    if (isPositiveSize(orderDto)) {
+      handleBuyMarketOrder(orderDto, securityOrder, account.get());
+    } else {
+      handleSellMarketOrder(orderDto, securityOrder, account.get());
+    }
+    return securityOrderDao.save(securityOrder);
+  }
+
+  private void verifyTickerId(MarketOrderDto orderDto) {
+    if (!isTickerValid(orderDto)) {
+      throw new IllegalArgumentException("Invalid ticker id");
+    }
+  }
+
+  private void verifyOrderSize(MarketOrderDto orderDto) {
+    if (orderDto.getSize() == 0) {
       throw new IllegalArgumentException("Invalid order size");
     }
   }
 
-  private void handleSellMarketOrder(MarketOrderDto orderDto, SecurityOrder securityOrder, Account account) {
+  private void handleSellMarketOrder(MarketOrderDto orderDto, SecurityOrder securityOrder,
+      Account account) {
     Position position = positionDao.findById(account.getId()).get();
     Integer positionAfterOrder = position.getPosition() + orderDto.getSize();
     Double pricePerUnit = quoteDao.findById(orderDto.getTicker()).get().getBidPrice();
