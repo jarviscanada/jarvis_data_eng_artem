@@ -39,10 +39,6 @@ public class MarketDataDao implements CrudRepository<IexQuote, String> {
     IEX_BATCH_URL = marketDataConfig.getHost() + IEX_BATCH_PATH + marketDataConfig.getToken();
   }
 
-  /**
-   * @param ticker
-   * @return
-   */
   @Override
   public Optional<IexQuote> findById(String ticker) {
     Optional<IexQuote> iexQuote;
@@ -58,10 +54,6 @@ public class MarketDataDao implements CrudRepository<IexQuote, String> {
     return iexQuote;
   }
 
-  /**
-   * @param tickers
-   * @return
-   */
   @Override
   public List<IexQuote> findAllById(Iterable<String> tickers) {
     String tickersString = getStringOfTickers(tickers);
