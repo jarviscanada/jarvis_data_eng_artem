@@ -41,7 +41,6 @@ public class TraderAccountController {
       produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
   public TraderAccountView createTrader(@PathVariable String firstname,
       @PathVariable String lastname,
-      //@PathVariable @DateTimeFormat(pattern = "yyy-MM-dd") LocalDate dob,
       @PathVariable @DateTimeFormat(iso = ISO.DATE) LocalDate dob,
       @PathVariable String country,
       @PathVariable String email){

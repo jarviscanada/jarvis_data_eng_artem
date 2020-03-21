@@ -75,7 +75,6 @@ public class MarketDataDao implements CrudRepository<IexQuote, String> {
         } catch (JSONException e) {
           throw new IllegalArgumentException("Wrong ticker name");
         } catch (Exception e) {
-          e.printStackTrace();
           throw new DataRetrievalFailureException(
               "Failed to convert response body to the list of objects");
         }
