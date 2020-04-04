@@ -30,10 +30,10 @@ Zeppelin - another external API that is basically a web notebook that gives you 
 
 # Hive Project
 - The purpose of this project was to practice processing big data using Apache Hive. Create different types of tables and store the data inside them. Then, see the effects of each table on speed of the queries. In addition, try out different SerDe (lazySerDe and OpenCSVSerDe).  
-- Post your Zeppelin Notebook screenshot here
-	- Make sure your Notebook is nice and clean as hiring managers will visit your project
-	- use `Full Page Screen Capture` chrome extention to capture a webpage as a picture
+![image2](/hadoop/notebook.png)
 
 # Improvements
 If you have more time, what would you improve?
-- at least three improvements
+- Try out bucketing and see it's influence on query performance
+- Try out all queries used in the project using Scala to increase the performance of queries
+- Try to combine partitioning and bucketing to increase the performance of queries
