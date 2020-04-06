@@ -6,7 +6,7 @@ Table of contents
 
 
 # Introduction
-- Purpose of this project: help data processing team to process the data using Apache Hadoop  
+- Purpose of this project: help data analytics team to process the data using Apache Hadoop  
 - Evaluated Core Hadoop components, including MapReduce, HDFS, and YARN
 - Provisioned a Hadoop Cluster using GCP
 - Solved business problem using Apache Hive and Zeppelin Notebook
