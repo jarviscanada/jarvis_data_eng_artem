@@ -12,7 +12,7 @@ Table of contents
 - Solved business problem using Apache Hive and Zeppelin Notebook
 
 # Hadoop Cluster
-![image](/hadoop/ClusterDiagram.png)
+![image](/hadoop/Diagram.png)
 The cluster consists of one Master Node and two Worker Nodes. Each node has 2 CPUs, 12 GB RAM, 100 GB of storage memory. This cluster uses Hadoop ecosystem to store and process the data as well as some other APIs that simplify the use of Hadoop. Cluster consists consist of multiple components: HDFS, YARN, Hive, Zeppelin.
 
 ### HDFS
