@@ -10,9 +10,7 @@ Table of contents
 
 # Spark Architecture
 - Spark Architecture diagram
-	- driver & executors
-  - YARN
-  - SparkSession
+![image](/spark/Diagram.png)
 
 # Spark RDD Project
 - Spark RDD (Resilient Distributed Dataset) - a fault-tolerant distributed collection of records spread over one or many partitions. RDDs are considered low level and advised to be used in the situations when higher-level structures like DataFrames or DataSets cannot be used instead. It is advised that RDDs should be used instead of higher-level APIs in one of three cases: you need some functionality that is not available in higher-level APIs, you need to maintain a legacy codebase written using RDDs or you need to do some custom shared variable (variables that are used in custom user-defined functions that have special properties when running on a cluster) manipulation. RDDs involve two main types of operations: transformations and actions. Transformations are lazy operations that return other RDD, while actions are operations that involve some computations on the data and return of a value. 
