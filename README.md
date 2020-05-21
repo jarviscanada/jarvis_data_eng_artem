@@ -11,7 +11,7 @@ I am a recent graduate from the University of Manitoba where I majored in Comput
 
 ## Development Projects
 
-Project source code: [https://github.com/jarviscanada/jarvis_data_eng_demo](https://github.com/jarviscanada/jarvis_data_eng_demo)
+Project source code: [https://github.com/jarviscanada/jarvis_data_eng_artem](https://github.com/jarviscanada/jarvis_data_eng_artem)
 
 - **[Cluster Monitor](./linux_sql)**: Implemented a Cluster Monitor Agent which is an internal tool that collects hardware specifications of each server and monitors usage of resources by each of the servers. All of the information is stored in the RDBMS (PostgreSQL). It helps the infrastructure team to generate reports for future resource planning.
 
